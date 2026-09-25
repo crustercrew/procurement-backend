@@ -1,0 +1,68 @@
+services:
+  # ─────────────────────────────────────────
+  # PostgreSQL Database
+  # Port host bisa diubah via .env: DB_PORT=5433
+  # ─────────────────────────────────────────
+  postgres:
+    image: 'postgres:16-alpine'
+    container_name: procurement-java-postgres
+    restart: unless-stopped
+    environment:
+      - 'POSTGRES_DB=procurement_db_dev'
+      - 'POSTGRES_USER=cruster'
+      - 'POSTGRES_PASSWORD=8945728'
+    volumes:
+      - 'postgres_data:/var/lib/postgresql/data'
+    ports:
+      - '5430:5432'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U cruster -d procurement_db_dev" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────
+  # Spring Boot Application
+  # Port host: 8080 change when already used by other
+  # ─────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: procurement-java-backend
+    labels:
+      org.springframework.boot.ignore: "true"
+    restart: always
+    ports:
+      - '8080:8080'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - 'SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/procurement_db_dev'
+      - 'SPRING_DATASOURCE_USERNAME=cruster'
+      - 'SPRING_DATASOURCE_PASSWORD=8945728'
+      - 'SPRING_JPA_HIBERNATE_DDL-auto=update'
+
+  # ─────────────────────────────────────────
+  # JUnit Test Runner
+  # Hanya jalan saat: docker compose --profile test run --rm test
+  # ─────────────────────────────────────────
+  backendtest:
+    profiles:
+      - test
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: procurement-java-backend-test
+    depends_on:
+      - postgres
+    environment:
+      - 'SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/procurement_db_dev'
+      - 'SPRING_DATASOURCE_USERNAME=cruster'
+      - 'SPRING_DATASOURCE_PASSWORD=8945728'
+    volumes:
+      - ./target:/app/target
+
+volumes:
+  postgres_data:

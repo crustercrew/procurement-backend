@@ -1,0 +1,18 @@
+package com.crustercrew.project.procurementjavabe.config;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+
+@ConfigurationProperties("jwt")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class JwtProperties{
+        private String secret = "";
+        private long expiration = 86400000;
+}
