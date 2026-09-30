@@ -1,0 +1,79 @@
+# ==========================================
+# Maven & Build Artifacts
+# ==========================================
+target/
+**/target/
+build/
+**/build/
+dist/
+**/dist/
+*.jar
+*.war
+*.ear
+*.class
+
+# Maven Wrapper JAR (downloaded automatically by script)
+.mvn/wrapper/maven-wrapper.jar
+
+# ==========================================
+# IDEs & Code Editors
+# ==========================================
+# IntelliJ IDEA
+.idea/
+**/.idea/
+*.iws
+*.iml
+**/*.iml
+*.ipr
+out/
+**/out/
+
+# Eclipse & Spring Tool Suite (STS)
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+# Visual Studio Code
+.vscode/
+**/.vscode/
+*.code-workspace
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/nbdist/
+/.nb-gradle/
+
+# ==========================================
+# Logs & Temp Files
+# ==========================================
+*.log
+logs/
+**/logs/
+temp/
+tmp/
+*.tmp
+*.bak
+
+# ==========================================
+# Environment Variables & Secrets
+# ==========================================
+.env
+.env.local
+*.secret
+
+# ==========================================
+# OS Generated Files
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini

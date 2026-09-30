@@ -1,0 +1,970 @@
+{
+  "info": {
+    "_postman_id": "8bd42ab9-bb24-4970-a61c-c907526d9c66",
+    "name": "Procurement Microservices API",
+    "description": "Complete API Collection for Procurement Microservices System with Spring Cloud (Eureka, Gateway, Config Server, Spring Data REST, OpenFeign, OAuth2 & JWT Role-Based Access Control).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "gateway_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "auth_url",
+      "value": "http://localhost:8081",
+      "type": "string"
+    },
+    {
+      "key": "client_id",
+      "value": "procurement-client",
+      "type": "string"
+    },
+    {
+      "key": "client_secret",
+      "value": "procurement-secret",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "token_requester",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "token_manager",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "token_vendor",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "pr_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "catalog_item_id",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "00 - Authentication & Role Logins",
+      "description": "OAuth2 Authorization Server endpoints for issuing JWT Access Tokens & End-User Role Authentication (REQUESTER, MANAGER, VENDOR).",
+      "item": [
+        {
+          "name": "POST Get OAuth2 Access Token (Client Credentials)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access_token) {",
+                  "    pm.collectionVariables.set(\"access_token\", jsonData.access_token);",
+                  "    console.log(\"OAuth2 client token saved: \" + jsonData.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{client_id}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{client_secret}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "client_credentials",
+                  "type": "text"
+                },
+                {
+                  "key": "scope",
+                  "value": "read write",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{gateway_url}}/oauth2/token",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "oauth2",
+                "token"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST Login REQUESTER (Staff Pengadaan)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.expect(jsonData.role).to.eql(\"REQUESTER\");",
+                  "pm.collectionVariables.set(\"token_requester\", jsonData.token);",
+                  "console.log(\"Token Requester tersimpan!\");"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"requester\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/auth/login",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST Login MANAGER (Approver)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.expect(jsonData.role).to.eql(\"MANAGER\");",
+                  "pm.collectionVariables.set(\"token_manager\", jsonData.token);",
+                  "console.log(\"Token Manager tersimpan!\");"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"manager\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/auth/login",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST Login VENDOR (PT Dell Indonesia)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.expect(jsonData.role).to.eql(\"VENDOR\");",
+                  "pm.collectionVariables.set(\"token_vendor\", jsonData.token);",
+                  "console.log(\"Token Vendor tersimpan!\");"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"vendor_dell\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/auth/login",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[NEG] Login Password Salah -> 401 Unauthorized",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401 Unauthorized\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"requester\",\n  \"password\": \"password_salah\"\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/auth/login",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "01 - User Service (Spring Data REST)",
+      "description": "Spring Data REST endpoints for User entity management with Hypermedia (HATEOAS).",
+      "item": [
+        {
+          "name": "GET All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_requester}}"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway_url}}/api/users",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_requester}}"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway_url}}/api/users/1",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Search Users by Role (VENDOR)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_requester}}"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway_url}}/api/users/search/findByRole?role=VENDOR",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "search",
+                "findByRole"
+              ],
+              "query": [
+                {
+                  "key": "role",
+                  "value": "VENDOR"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST Create New User (Requester/Vendor)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_manager}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"requester_it\",\n  \"password\": \"$2a$10$e8w/u1Z91uS89.FkK1XWxeh73oB.0Oq7YF8Y289qZ8v/XzV8.1U/W\",\n  \"fullName\": \"Staff IT Requester\",\n  \"email\": \"it_requester@company.com\",\n  \"role\": \"REQUESTER\",\n  \"departmentId\": 1,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/users",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Catalog Service (Spring Data REST)",
+      "description": "Spring Data REST endpoints for Catalog Items & Categories with StripPrefix=2 at API Gateway.",
+      "item": [
+        {
+          "name": "GET All Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_requester}}"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway_url}}/api/catalogs/categories",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "catalogs",
+                "categories"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET All Catalog Items",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "var items = jsonData._embedded ? jsonData._embedded.catalogItems : (jsonData.content || []);",
+                  "if (items && items.length > 0) {",
+                  "    pm.collectionVariables.set(\"catalog_item_id\", items[0].id);",
+                  "    console.log(\"Saved catalog_item_id: \" + items[0].id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_requester}}"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway_url}}/api/catalogs/catalog-items",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "catalogs",
+                "catalog-items"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Catalog Item by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_requester}}"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway_url}}/api/catalogs/catalog-items/{{catalog_item_id}}",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "catalogs",
+                "catalog-items",
+                "{{catalog_item_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_manager}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hardware Server\",\n  \"description\": \"Server hardware dan perangkat rackmount\"\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/catalogs/categories",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "catalogs",
+                "categories"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST Create Catalog Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_manager}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dell PowerEdge R750\",\n  \"description\": \"Server Rack 2U Intel Xeon Scalable\",\n  \"price\": 45000000,\n  \"unit\": \"UNIT\",\n  \"categoryId\": 1,\n  \"vendorId\": 3,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/catalogs/catalog-items",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "catalogs",
+                "catalog-items"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Requisitions (RBAC & Approval Workflow)",
+      "description": "Purchase Requisition workflow with OpenFeign cross-service call and Role-Based Access Control enforced at API Gateway.",
+      "item": [
+        {
+          "name": "[POS] Create PR - REQUESTER (Harusnya 201 Created)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201 Created - Requester berhasil create PR\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set(\"pr_id\", jsonData.id);",
+                  "    console.log(\"Created PR ID: \" + jsonData.id);",
+                  "}",
+                  "pm.expect(jsonData.status).to.eql(\"PENDING\");"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_requester}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requesterId\": 1,\n  \"items\": [\n    {\n      \"catalogItemId\": 1,\n      \"quantity\": 2\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/requisitions",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "requisitions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[NEG] Create PR - MANAGER (Harusnya 403 Forbidden)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403 Forbidden - Manager dilarang create PR\", function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_manager}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requesterId\": 2,\n  \"items\": [\n    {\n      \"catalogItemId\": 1,\n      \"quantity\": 1\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/requisitions",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "requisitions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET All Purchase Requisitions (Bisa diakses Requester/Manager)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_requester}}"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway_url}}/api/requisitions",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "requisitions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Purchase Requisition by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_manager}}"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway_url}}/api/requisitions/{{pr_id}}",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "requisitions",
+                "{{pr_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[NEG] Approve PR - REQUESTER (Harusnya 403 Forbidden)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403 Forbidden - Requester dilarang approve PR\", function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_requester}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"APPROVE\"\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/requisitions/{{pr_id}}/review",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "requisitions",
+                "{{pr_id}}",
+                "review"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[POS] Approve PR - MANAGER (Harusnya 200 OK)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200 OK - Manager berhasil approve PR\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.expect(jsonData.status).to.eql(\"APPROVED\");"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_manager}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"APPROVE\"\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/requisitions/{{pr_id}}/review",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "requisitions",
+                "{{pr_id}}",
+                "review"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT Reject PR - MANAGER (Harusnya 200 OK)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200 OK - Manager berhasil reject PR\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.expect(jsonData.status).to.eql(\"REJECTED\");"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_manager}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"REJECT\",\n  \"rejectionReason\": \"Anggaran belanja periode ini telah melebihi batas pagu\"\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/requisitions/{{pr_id}}/review",
+              "host": [
+                "{{gateway_url}}"
+              ],
+              "path": [
+                "api",
+                "requisitions",
+                "{{pr_id}}",
+                "review"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Service Discovery & Config Health",
+      "description": "Infrastructure health checks for Netflix Eureka and Spring Cloud Config Server.",
+      "item": [
+        {
+          "name": "GET Eureka Registered Applications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8761/eureka/apps",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8761",
+              "path": [
+                "eureka",
+                "apps"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Config Server - user-service",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8888/user-service/default",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8888",
+              "path": [
+                "user-service",
+                "default"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Config Server - catalog-service",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8888/catalog-service/default",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8888",
+              "path": [
+                "catalog-service",
+                "default"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Config Server - requisition-service",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8888/requisition-service/default",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8888",
+              "path": [
+                "requisition-service",
+                "default"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
