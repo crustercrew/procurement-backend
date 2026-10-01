@@ -12,11 +12,15 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,13 +31,17 @@ public class AuthControllers {
     private final PasswordEncoder passwordEncoder;
     private final JwtEncoder jwtEncoder;
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-       User user = userRepository.findByUsername(request.getUsername())
-               .orElseThrow(()-> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        Optional<User> userOpt = userRepository.findByUsername(request.getUsername());
 
-       if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
-           throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
-       }
+        if (userOpt.isEmpty() || !passwordEncoder.matches(request.getPassword(), userOpt.get().getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "status", 401,
+                    "error", "Unauthorized",
+                    "message", "Invalid username or password"
+            ));
+        }
+        User user = userOpt.get();
 
         Instant now = Instant.now();
         JwtClaimsSet jwtClaimsSet = JwtClaimsSet.builder()

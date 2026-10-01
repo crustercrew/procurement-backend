@@ -24,3 +24,4 @@ spring:
 springdoc:
   data-rest:
     enabled: false
+  override-with-generic-response: false
