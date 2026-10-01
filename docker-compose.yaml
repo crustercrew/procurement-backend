@@ -1,7 +1,4 @@
 services:
-  # ─────────────────────────────────────────────────────────────
-  # PostgreSQL Database (Port 5432)
-  # ─────────────────────────────────────────────────────────────
   postgres:
     image: postgres:16-alpine
     container_name: procurement-postgres
@@ -19,8 +16,84 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  discovery-service:
+    build: ./discovery-service
+    container_name: procurement-discovery
+    ports:
+      - "8761:8761"
+
+  config-service:
+    build: ./config-service
+    container_name: procurement-config
+    ports:
+      - "8888:8888"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+    depends_on:
+      - discovery-service
+
+  user-service:
+    build: ./user-service
+    container_name: procurement-user
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/procurement_db
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-service:
+        condition: service_started
+      config-service:
+        condition: service_started
+
+  catalog-service:
+    build: ./catalog-service
+    container_name: procurement-catalog
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/procurement_db
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-service:
+        condition: service_started
+
+  requisition-service:
+    build: ./requisition-service
+    container_name: procurement-requisition
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/procurement_db
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-service:
+        condition: service_started
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: procurement-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://user-service:8081/oauth2/jwks
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+    depends_on:
+      - discovery-service
+      - user-service
+
   # ─────────────────────────────────────────────────────────────
-  # pgAdmin (Opsional: Web UI untuk melihat isi tabel via browser)
+  # pgAdmin
   # Buka di browser: http://localhost:5050
   # ─────────────────────────────────────────────────────────────
   pgadmin:
@@ -30,6 +103,8 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@procurement.com
       PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - ./dbserver.json:/pgadmin4/servers.json
     ports:
       - "5050:80"
     depends_on:

@@ -17,3 +17,7 @@ spring:
       default-page-size: 20
       return-body-on-create: true
       return-body-on-update: true
+
+springdoc:
+  data-rest:
+    enabled: false

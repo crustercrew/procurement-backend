@@ -1,0 +1,13 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Procurement DB",
+      "Group": "Servers",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "procurement_db",
+      "Username": "postgres",
+      "SSLMode": "prefer"
+    }
+  }
+}
