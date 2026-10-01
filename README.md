@@ -336,4 +336,4 @@ procurement-backend/
 ## 11. Penulis & Lisensi
 
 * **Author**: CrusterCrew
-* **Project**: Software Engineer Test - Java Microservices System
+* **Project**: Java Procurement Microservices System
