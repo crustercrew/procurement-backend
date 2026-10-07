@@ -119,7 +119,7 @@ Sistem ini mendukung **2 opsi cara menjalankan**:
 Di opsi ini, PostgreSQL dijalankan via Docker (atau lokal), sementara microservices Java dijalankan langsung lewat terminal atau IDE (IntelliJ IDEA / VS Code).
 
 #### Langkah 0: Inisialisasi Database (Wajib Dilakukan Sebelum Start Service Java!)
-Microservices (`user-service`, `catalog-service`, dan `requisition-service`) membutuhkan koneksi database aktif saat booting untuk Hibernate JPA initialization.
+Microservices (`user-service`, `vendor-catalog-service`, dan `requisition-service`) membutuhkan koneksi database aktif saat booting untuk Hibernate JPA initialization.
 
 * **Cara A: Menggunakan Docker Postgres (Paling Mudah & Otomatis)**:
   Cukup jalankan container postgres di background:

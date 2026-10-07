@@ -27,6 +27,7 @@ dist/
 *.ipr
 out/
 **/out/
+Procurement-Java-Backend-original/
 
 # Eclipse & Spring Tool Suite (STS)
 .apt_generated/
@@ -77,3 +78,4 @@ tmp/
 ehthumbs.db
 Thumbs.db
 [Dd]esktop.ini
+microservices_system_design.md

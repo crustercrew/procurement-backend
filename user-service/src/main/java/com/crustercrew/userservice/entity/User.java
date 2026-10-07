@@ -1,6 +1,6 @@
 package com.crustercrew.userservice.entity;
 
-import com.crustercrew.userservice.entity.enums.UserRole;
+import com.crustercrew.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,7 +1,7 @@
 package com.crustercrew.userservice.controllers;
 
+import com.crustercrew.enums.UserRole;
 import com.crustercrew.userservice.entity.User;
-import com.crustercrew.userservice.entity.enums.UserRole;
 import com.crustercrew.userservice.repositories.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

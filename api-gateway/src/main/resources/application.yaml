@@ -1,45 +1,5 @@
-server:
-  port: 8080
-
-spring:
+﻿spring:
   application:
     name: api-gateway
   config:
     import: optional:configserver:http://localhost:8888
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: http://localhost:8081/oauth2/jwks
-  cloud:
-    gateway:
-      server:
-        webflux:
-          discovery:
-            locator:
-              enabled: false
-          routes:
-            # Route ke User Service (OAuth2 Token, Auth & Spring Data REST Users)
-            - id: user-service-route
-              uri: lb://user-service
-              predicates:
-                - Path=/oauth2/**, /api/auth/**, /api/users/**
-
-            # Route ke Catalog Service (Spring Data REST)
-            - id: catalog-service-route
-              uri: lb://catalog-service
-              predicates:
-                - Path=/api/catalogs/**
-              filters:
-                - StripPrefix=2
-
-            # Route ke Requisition Service
-            - id: requisition-service-route
-              uri: lb://requisition-service
-              predicates:
-                - Path=/api/requisitions/**
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
