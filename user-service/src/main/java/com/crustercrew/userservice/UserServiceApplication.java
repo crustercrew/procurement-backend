@@ -2,11 +2,10 @@ package com.crustercrew.userservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@SpringBootApplication(excludeName = {
-        "org.springdoc.core.configuration.SpringDocDataRestConfiguration",
-        "org.springdoc.core.configuration.SpringDocHateoasConfiguration"
-})
+@SpringBootApplication
+@EnableFeignClients
 public class UserServiceApplication {
 
     public static void main(String[] args) {

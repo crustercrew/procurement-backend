@@ -1,7 +1,7 @@
-package com.crustercrew.authservice.configs;
+package com.crustercrew.userservice.configs;
 
+import com.crustercrew.enums.UserRole;
 import com.crustercrew.userservice.entity.User;
-import com.crustercrew.userservice.entity.enums.UserRole;
 import com.crustercrew.userservice.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
-public class DataInitializer {
+public class DataUserInitializer {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -21,41 +21,42 @@ public class DataInitializer {
             if (userRepository.count() == 0) {
                 // 1. Staff Requester
                 userRepository.save(User.builder()
-                        .username("requester")
-                        .password(passwordEncoder.encode("password123"))
-                        .fullName("Staff Pengadaan")
                         .email("requester@company.com")
+                        .passwordHash(passwordEncoder.encode("password123"))
+                        .fullName("Staff Pengadaan")
                         .role(UserRole.REQUESTER)
                         .departmentId(1L)
+                        .isActive(true)
                         .build());
+
                 // 2. Manager Approver
                 userRepository.save(User.builder()
-                        .username("manager")
-                        .password(passwordEncoder.encode("password123"))
-                        .fullName("Manager Procurement")
                         .email("manager@company.com")
+                        .passwordHash(passwordEncoder.encode("password123"))
+                        .fullName("Manager Procurement")
                         .role(UserRole.MANAGER)
                         .departmentId(1L)
+                        .isActive(true)
                         .build());
-                // 3. Vendor User (Vendor sebagai Role)
+
+                // 3. Vendor User
                 userRepository.save(User.builder()
-                        .username("vendor_dell")
-                        .password(passwordEncoder.encode("password123"))
-                        .fullName("PT Dell Indonesia")
                         .email("sales@dell.co.id")
+                        .passwordHash(passwordEncoder.encode("password123"))
+                        .fullName("PT Dell Indonesia")
                         .role(UserRole.VENDOR)
-                        .companyName("PT Dell Technologies Indonesia")
-                        .taxId("01.234.567.8-999.000")
-                        .address("Menara BCA Lt. 35, Jakarta Pusat")
+                        .isActive(true)
                         .build());
+
                 // 4. Admin
                 userRepository.save(User.builder()
-                        .username("admin")
-                        .password(passwordEncoder.encode("password123"))
-                        .fullName("System Administrator")
                         .email("admin@company.com")
+                        .passwordHash(passwordEncoder.encode("password123"))
+                        .fullName("System Administrator")
                         .role(UserRole.ADMIN)
+                        .isActive(true)
                         .build());
+
                 System.out.println(">>> Sample Users (Requester, Manager, Vendor, Admin) berhasil di-seed ke DB!");
             }
         };

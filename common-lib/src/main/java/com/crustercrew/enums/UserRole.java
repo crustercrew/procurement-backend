@@ -1,6 +1,7 @@
 package com.crustercrew.enums;
 
 public enum UserRole {
+    ADMIN,
     REQUESTER,
     MANAGER,
     FINANCE,

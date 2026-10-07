@@ -1,5 +1,6 @@
 package com.crustercrew.userservice.entity;
 
+import com.crustercrew.entity.BaseEntity;
 import com.crustercrew.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,26 +12,29 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(nullable = false, unique = true)
-    private String username;
-    @Column(nullable = false)
-    private String password;
-    private String fullName;
-    @Column(nullable = false, unique = true)
-    private String email;
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole role; // REQUESTER, MANAGER, VENDOR, ADMIN
+    Long id;
+
+    // join column Department
+    @Column(name = "department_id")
     private Long departmentId;
-    private String phone;
-    private String address;
-    // Khusus untuk user dengan role VENDOR
-    private String companyName;
-    private String taxId;
+
+    @Column(nullable = false, unique = true, length = 150)
+    private String email;
+
+    @Column(name = "password_hash", nullable = false, length = 255)
+    private String passwordHash;
+
+    @Column(name = "full_name", nullable = false, length = 150)
+    private String fullName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private UserRole role;
+
+    @Column(name = "is_active")
     @Builder.Default
     private Boolean isActive = true;
 }
