@@ -3,10 +3,12 @@ package com.crustercrew.userservice.controllers;
 import com.crustercrew.dto.APIResponse;
 import com.crustercrew.userservice.dto.request.CreateUserRequest;
 import com.crustercrew.userservice.dto.request.UpdateUserRequest;
+import com.crustercrew.userservice.dto.request.VerifyCredentialsRequest;
 import com.crustercrew.userservice.dto.response.UserResponse;
 import com.crustercrew.userservice.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.models.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping({"/api/v1/users", "/api/users"})
@@ -76,6 +81,20 @@ public class UserController {
     public ResponseEntity<APIResponse<UserResponse>> deactivateUser(@PathVariable Long id) {
         return ResponseEntity.ok(
                 APIResponse.success("User berhasil dinonaktifkan", userService.deactivateUser(id))
+        );
+    }
+
+    @PostMapping("/verify-credentials")
+    @Operation(summary = "Verify credentials", description = "Memverifikasi kredensial pengguna")    
+    public ResponseEntity<APIResponse<UserResponse>> verifyCredential(
+        @RequestBody
+        @Valid 
+        VerifyCredentialsRequest request 
+    ){
+        return ResponseEntity.ok(
+            APIResponse.success("kredensial valid", 
+                userService.verifyCredential(request.getEmail(), request.getPassword())
+            )
         );
     }
 }

@@ -1,4 +1,4 @@
-﻿server:
+server:
   port: 8080
 
 spring:
@@ -14,7 +14,7 @@ spring:
         - id: auth-service
           uri: lb://auth-service
           predicates:
-            - Path=/api/auth/**,/oauth2/**
+            - Path=/api/auth/**,/api/v1/auth/**,/oauth2/**
 
         # 2. User Service (Port 8082)
         - id: user-service
@@ -26,7 +26,7 @@ spring:
         - id: purchase-requisition-service
           uri: lb://purchase-requisition-service
           predicates:
-            - Path=/api/v1/purchase-requisitions/**,/api/purchase-requisitions/**
+            - Path=/api/v1/purchase-requisitions/**,/api/purchase-requisitions/**,/api/v1/requisitions/**
 
         # 4. Vendor & Catalog Service (Port 8085)
         - id: vendor-catalog-service

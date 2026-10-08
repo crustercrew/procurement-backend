@@ -4,6 +4,7 @@ import com.crustercrew.dto.APIResponse;
 import com.crustercrew.enums.UserRole;
 import com.crustercrew.exception.baseException.BusinessValidationException;
 import com.crustercrew.exception.baseException.ResourceNotFoundException;
+import com.crustercrew.exception.baseException.UnauthorizedAccessException;
 import com.crustercrew.userservice.dto.request.CreateUserRequest;
 import com.crustercrew.userservice.dto.request.UpdateUserRequest;
 import com.crustercrew.userservice.dto.response.DepartmentResponse;
@@ -121,5 +122,16 @@ public class UserService {
         user.setIsActive(false);
         User saved = userRepository.save(user);
         return UserResponse.from(saved);
+    }
+
+    public UserResponse verifyCredential(String email, String password){
+        User user = userRepository.findByEmail(email);
+        if (user == null || !passwordEncoder.matches(password, user.getPasswordHash())) {
+            throw new UnauthorizedAccessException("Email atau password salah!");
+        }
+        if(!Boolean.TRUE.equals(user.getIsActive())){
+            throw new UnauthorizedAccessException("Akun sudah tidak aktif!");
+        }
+        return UserResponse.from(user);
     }
 }
