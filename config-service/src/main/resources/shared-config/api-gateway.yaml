@@ -23,10 +23,10 @@ spring:
             - Path=/api/v1/users/**,/api/users/**
 
         # 3. Requisition Service (Port 8083)
-        - id: requisition-service
-          uri: lb://requisition-service
+        - id: purchase-requisition-service
+          uri: lb://purchase-requisition-service
           predicates:
-            - Path=/api/v1/requisitions/**,/api/requisitions/**
+            - Path=/api/v1/purchase-requisitions/**,/api/purchase-requisitions/**
 
         # 4. Vendor & Catalog Service (Port 8085)
         - id: vendor-catalog-service

@@ -9,7 +9,7 @@
         <relativePath/>
     </parent>
     <groupId>com.crustercrew</groupId>
-    <artifactId>requisition-service</artifactId>
+    <artifactId>purchase-requisition-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>requisition-service</name>
     <description>requisition-service</description>

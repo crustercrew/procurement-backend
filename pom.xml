@@ -16,9 +16,10 @@
         <module>api-gateway</module>
         <module>user-service</module>
         <module>vendor-catalog-service</module>
-        <module>requisition-service</module>
+        <module>purchase-requisition-service</module>
         <module>common-lib</module>
         <module>auth-service</module>
         <module>department-budget-service</module>
+        <module>purchase-order-service</module>
     </modules>
 </project>
