@@ -56,7 +56,7 @@ spring:
         - id: department-budget-service
           uri: lb://department-budget-service
           predicates:
-            - Path=/api/v1/budgets/**,/api/v1/departments/**
+            - Path=/api/v1/budgets/**,/api/v1/departments/**,/api/v1/department-budgets/**
 
         # 9. Audit Service (Port 8089)
         - id: audit-service

@@ -86,7 +86,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://user-service:8081/oauth2/jwks
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://auth-service:8081/oauth2/jwks
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
     depends_on:
       - discovery-service

@@ -17,8 +17,7 @@ spring:
     open-in-view: false
 
 jwt:
-  secret: ${JWT_SECRET}
-  expiration: ${JWT_EXPIRATION_MS:86400000}
+  access-expiration: ${JWT_ACCESS_EXPIRATION_MS:900000}
   refresh-expiration: ${JWT_REFRESH_EXPIRATION_MS:604800000}
 
 management:
