@@ -1,10 +1,8 @@
 package com.crustercrew.departmentbudgetservice.service;
 
 import com.crustercrew.departmentbudgetservice.dto.response.BudgetSummaryResponse;
-import com.crustercrew.departmentbudgetservice.entity.Department;
 import com.crustercrew.departmentbudgetservice.entity.DepartmentBudgets;
 import com.crustercrew.departmentbudgetservice.repositories.DepartmentBudgetsRepository;
-import com.crustercrew.departmentbudgetservice.repositories.DepartmentRepository;
 import com.crustercrew.exception.baseException.InsufficientBudgetException;
 import com.crustercrew.exception.baseException.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;

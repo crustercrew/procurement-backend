@@ -3,12 +3,10 @@ package com.crustercrew.departmentbudgetservice.controllers;
 import com.crustercrew.departmentbudgetservice.dto.request.CreateDepartmentRequest;
 import com.crustercrew.departmentbudgetservice.dto.response.BudgetSummaryResponse;
 import com.crustercrew.departmentbudgetservice.entity.Department;
-import com.crustercrew.departmentbudgetservice.entity.DepartmentBudgets;
 import com.crustercrew.departmentbudgetservice.service.DepartmentBudgetService;
 import com.crustercrew.departmentbudgetservice.service.DepartmentService;
 import com.crustercrew.dto.APIResponse;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RequestParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +27,7 @@ public class DepartmentController {
     public ResponseEntity<APIResponse<Page<Department>>> getallDepartments(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "costCenterCode",required = false) String costCenterCode,
-            @PageableDefault(size = 10, page = 0)
+            @PageableDefault()
             Pageable pageable
     ) {
         Page<Department> page = departmentService.getAllDepartments(name, costCenterCode, pageable);
