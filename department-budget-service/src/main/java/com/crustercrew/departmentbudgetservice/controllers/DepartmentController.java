@@ -1,6 +1,7 @@
 package com.crustercrew.departmentbudgetservice.controllers;
 
 import com.crustercrew.departmentbudgetservice.dto.request.CreateDepartmentRequest;
+import com.crustercrew.departmentbudgetservice.dto.response.BudgetSummaryResponse;
 import com.crustercrew.departmentbudgetservice.entity.Department;
 import com.crustercrew.departmentbudgetservice.entity.DepartmentBudgets;
 import com.crustercrew.departmentbudgetservice.service.DepartmentBudgetService;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/v1/departments")
@@ -39,6 +42,18 @@ public class DepartmentController {
     public ResponseEntity<APIResponse<Department>> getDepartmentById(@PathVariable Long id) {
         return ResponseEntity.ok(
                 APIResponse.success("Success get data",departmentService.getDepartmentById(id))
+        );
+    }
+
+    @GetMapping("/{id}/budget")
+    public ResponseEntity<APIResponse<BudgetSummaryResponse>> getDepartmentBudget(
+            @PathVariable Long id,
+            @RequestParam(value = "fiscalYear", required = false) Integer fiscalYear
+    ) {
+        Integer year = fiscalYear != null ? fiscalYear : LocalDate.now().getYear();
+        return ResponseEntity.ok(
+                APIResponse.success("Berhasil mendapatkan ringkasan budget",
+                        departmentBudgetService.getBudgetSummary(id, year))
         );
     }
 

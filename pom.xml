@@ -54,5 +54,6 @@
         <module>auth-service</module>
         <module>department-budget-service</module>
         <module>purchase-order-service</module>
+        <module>audit-service</module>
     </modules>
 </project>

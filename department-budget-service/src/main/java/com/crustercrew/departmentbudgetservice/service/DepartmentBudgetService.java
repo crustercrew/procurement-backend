@@ -1,5 +1,6 @@
 package com.crustercrew.departmentbudgetservice.service;
 
+import com.crustercrew.departmentbudgetservice.dto.response.BudgetSummaryResponse;
 import com.crustercrew.departmentbudgetservice.entity.Department;
 import com.crustercrew.departmentbudgetservice.entity.DepartmentBudgets;
 import com.crustercrew.departmentbudgetservice.repositories.DepartmentBudgetsRepository;
@@ -80,5 +81,30 @@ public class DepartmentBudgetService {
 
     public DepartmentBudgets createDepartmentBudgets(DepartmentBudgets departmentBudgets){
         return departmentBudgetsRepository.save(departmentBudgets);
+    }
+
+    @Transactional(readOnly = true)
+    public BudgetSummaryResponse getBudgetSummary(Long departmentId, Integer fiscalYear){
+        DepartmentBudgets budget = departmentBudgetsRepository
+                .findByDepartmentIdAndFiscalYear(departmentId, fiscalYear);
+
+        if (budget == null) {
+            throw new ResourceNotFoundException(
+                    "Department budget tidak ditemukan untuk department id: " + departmentId
+                            + " fiscal year: " + fiscalYear);
+        }
+
+        BigDecimal remaining = budget.getAllocatedAmount()
+                .subtract(budget.getReservedAmount().add(budget.getSpentAmount()));
+
+        return BudgetSummaryResponse.builder()
+                .departmentId(budget.getDepartment().getId())
+                .departmentName(budget.getDepartment().getName())
+                .fiscalYear(budget.getFiscalYear())
+                .allocatedAmount(budget.getAllocatedAmount())
+                .reservedAmount(budget.getReservedAmount())
+                .spentAmount(budget.getSpentAmount())
+                .remainingAmount(remaining)
+                .build();
     }
 }

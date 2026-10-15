@@ -68,13 +68,13 @@ services:
       config-service:
         condition: service_started
 
-  catalog-service:
-    build: ./catalog-service
-    container_name: procurement-catalog
+  vendor-catalog-service:
+    build: ./vendor-catalog-service
+    container_name: procurement-vendor-catalog
     ports:
-      - "8082:8082"
+      - "8085:8085"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/procurement_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/procurement_vendor_catalog_db
       SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
     depends_on:
@@ -82,20 +82,58 @@ services:
         condition: service_healthy
       discovery-service:
         condition: service_started
+      config-service:
+        condition: service_started
 
-  requisition-service:
-    build: ./requisition-service
-    container_name: procurement-requisition
+  department-budget-service:
+    build: ./department-budget-service
+    container_name: procurement-department-budget
     ports:
-      - "8083:8083"
+      - "8088:8088"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/procurement_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/procurement_department_budget_db
       SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
     depends_on:
       postgres:
         condition: service_healthy
       discovery-service:
+        condition: service_started
+      config-service:
+        condition: service_started
+
+  audit-service:
+    build: ./audit-service
+    container_name: procurement-audit
+    ports:
+      - "8089:8089"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/procurement_audit_db
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-service:
+        condition: service_started
+      config-service:
+        condition: service_started
+
+  purchase-requisition-service:
+    build: ./purchase-requisition-service
+    container_name: procurement-requisition
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/procurement_requisition_db
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-service:
+        condition: service_started
+      config-service:
         condition: service_started
 
   api-gateway:

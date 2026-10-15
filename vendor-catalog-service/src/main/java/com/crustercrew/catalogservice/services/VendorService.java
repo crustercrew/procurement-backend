@@ -68,6 +68,18 @@ public class VendorService {
         return response;
     }
 
+    @Transactional(readOnly = true)
+    public VendorResponse getVendorInternalById(Long id) {
+        return toResponse(findOrThrow(id));
+    }
+
+    @Transactional(readOnly = true)
+    public VendorResponse getVendorInternalByUserId(Long userId) {
+        Vendor vendor = vendorRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor dengan user ID '" + userId + "' tidak ditemukan"));
+        return toResponse(vendor);
+    }
+
     @Transactional
     public VendorResponse createVendor(CreateVendorRequest request) {
         // 1. Cek apakah NPWP sudah terdaftar
