@@ -72,6 +72,7 @@ public class OAuth2AuthorizationServerConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
                                 "/api/auth/**",
+                                "/api/v1/auth/**",
                                 "/api/users/**",
                                 "/actuator/**",
                                 "/swagger-ui/**",

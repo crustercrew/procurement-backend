@@ -14,12 +14,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  data:
-    rest:
-      base-path: /api
-      default-page-size: 20
-      return-body-on-create: true
-      return-body-on-update: true
+  flyway:
+    # Flyway is invoked manually by FlywayDataInitializer (after Hibernate creates the schema),
+    # not by Spring Boot's early auto-run which executes before Hibernate.
+    enabled: false
 
 springdoc:
   data-rest:

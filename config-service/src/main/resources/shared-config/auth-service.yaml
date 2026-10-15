@@ -3,7 +3,7 @@
 
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:54320}/procurement_user_db
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:54320}/procurement_auth_db
     username: postgres
     password: "postgrespassword"
     driver-class-name: org.postgresql.Driver
@@ -14,14 +14,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  data:
-    rest:
-      base-path: /api
-      default-page-size: 20
-      return-body-on-create: true
-      return-body-on-update: true
 
 springdoc:
-  data-rest:
-    enabled: false
   override-with-generic-response: false

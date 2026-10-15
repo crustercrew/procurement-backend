@@ -4,6 +4,8 @@ import com.crustercrew.authservice.dto.request.LoginRequest;
 import com.crustercrew.authservice.dto.response.UserResponse;
 import com.crustercrew.dto.APIResponse;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -12,4 +14,7 @@ public interface UserClient {
 
     @PostMapping("/api/v1/users/verify-credentials")
     APIResponse<UserResponse> verifyCredentials(@RequestBody LoginRequest request);
+
+    @GetMapping("/api/v1/users/{id}")
+    APIResponse<UserResponse> getUserById(@PathVariable("id") Long id);
 }

@@ -9,57 +9,59 @@ spring:
           jwk-set-uri: ${JWK_SET_URI:http://localhost:8081/oauth2/jwks}
   cloud:
     gateway:
-      routes:
-        # 1. Auth Service (Port 8081)
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/auth/**,/api/v1/auth/**,/oauth2/**
+      server:
+        webflux:
+          routes:
+            # 1. Auth Service (Port 8081)
+            - id: auth-service
+              uri: lb://auth-service
+              predicates:
+                - Path=/api/auth/**,/api/v1/auth/**,/oauth2/**
 
-        # 2. User Service (Port 8082)
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/api/v1/users/**,/api/users/**
+            # 2. User Service (Port 8082)
+            - id: user-service
+              uri: lb://user-service
+              predicates:
+                - Path=/api/v1/users/**,/api/users/**
 
-        # 3. Requisition Service (Port 8083)
-        - id: purchase-requisition-service
-          uri: lb://purchase-requisition-service
-          predicates:
-            - Path=/api/v1/purchase-requisitions/**,/api/purchase-requisitions/**,/api/v1/requisitions/**
+            # 3. Requisition Service (Port 8083)
+            - id: purchase-requisition-service
+              uri: lb://purchase-requisition-service
+              predicates:
+                - Path=/api/v1/purchase-requisitions/**,/api/purchase-requisitions/**,/api/v1/requisitions/**
 
-        # 4. Vendor & Catalog Service (Port 8085)
-        - id: vendor-catalog-service
-          uri: lb://vendor-catalog-service
-          predicates:
-            - Path=/api/v1/vendors/**,/api/v1/catalog/**,/catalog-items/**,/categories/**
+            # 4. Vendor & Catalog Service (Port 8085)
+            - id: vendor-catalog-service
+              uri: lb://vendor-catalog-service
+              predicates:
+                - Path=/api/v1/vendors/**,/api/v1/catalog/**,/catalog-items/**,/categories/**
 
-        # 5. Purchase Order Service (Port 8084)
-        - id: purchase-order-service
-          uri: lb://purchase-order-service
-          predicates:
-            - Path=/api/v1/purchase-orders/**
+            # 5. Purchase Order Service (Port 8084)
+            - id: purchase-order-service
+              uri: lb://purchase-order-service
+              predicates:
+                - Path=/api/v1/purchase-orders/**
 
-        # 6. Goods Receipt Service (Port 8086)
-        - id: goods-receipt-service
-          uri: lb://goods-receipt-service
-          predicates:
-            - Path=/api/v1/goods-receipts/**
+            # 6. Goods Receipt Service (Port 8086)
+            - id: goods-receipt-service
+              uri: lb://goods-receipt-service
+              predicates:
+                - Path=/api/v1/goods-receipts/**
 
-        # 7. Invoice Service (Port 8087)
-        - id: invoice-service
-          uri: lb://invoice-service
-          predicates:
-            - Path=/api/v1/invoices/**
+            # 7. Invoice Service (Port 8087)
+            - id: invoice-service
+              uri: lb://invoice-service
+              predicates:
+                - Path=/api/v1/invoices/**
 
-        # 8. Department & Budget Service (Port 8088)
-        - id: department-budget-service
-          uri: lb://department-budget-service
-          predicates:
-            - Path=/api/v1/budgets/**,/api/v1/departments/**,/api/v1/department-budgets/**
+            # 8. Department & Budget Service (Port 8088)
+            - id: department-budget-service
+              uri: lb://department-budget-service
+              predicates:
+                - Path=/api/v1/budgets/**,/api/v1/departments/**,/api/v1/department-budgets/**
 
-        # 9. Audit Service (Port 8089)
-        - id: audit-service
-          uri: lb://audit-service
-          predicates:
-            - Path=/api/v1/audit-logs/**
+            # 9. Audit Service (Port 8089)
+            - id: audit-service
+              uri: lb://audit-service
+              predicates:
+                - Path=/api/v1/audit-logs/**

@@ -44,16 +44,7 @@ public class UserService {
             );
         }
         // Validasi department via Feign Client jika departmentId diisi
-        if (request.getDepartmentId() != null) {
-            try {
-                APIResponse<DepartmentResponse> dept = departmenServicesAPI.getDepartmentById(request.getDepartmentId());
-                if (dept == null || dept.data() == null) {
-                    throw new ResourceNotFoundException("Department dengan ID '" + request.getDepartmentId() + "' tidak ditemukan");
-                }
-            } catch (Exception e) {
-                throw new ResourceNotFoundException("Department dengan ID '" + request.getDepartmentId() + "' tidak ditemukan");
-            }
-        }
+        validateDepartment(request.getDepartmentId());
         User user = User.builder()
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
@@ -109,10 +100,26 @@ public class UserService {
         }
 
         if (request.getDepartmentId() != null) {
+            validateDepartment(request.getDepartmentId());
             user.setDepartmentId(request.getDepartmentId());
         }
         User saved = userRepository.save(user);
         return UserResponse.from(saved);
+    }
+
+    private void validateDepartment(Long departmentId) {
+        if (departmentId == null) {
+            return;
+        }
+        APIResponse<DepartmentResponse> dept;
+        try {
+            dept = departmenServicesAPI.getDepartmentById(departmentId);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Department dengan ID '" + departmentId + "' tidak ditemukan");
+        }
+        if (dept == null || dept.data() == null) {
+            throw new ResourceNotFoundException("Department dengan ID '" + departmentId + "' tidak ditemukan");
+        }
     }
 
     @Transactional

@@ -11,6 +11,7 @@ services:
       - "54320:5432"
     volumes:
       - "postgres_data:/var/lib/postgresql/data"
+      - "./docker/postgres/init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql:ro"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -d procurement_db" ]
       interval: 5s
@@ -33,13 +34,30 @@ services:
     depends_on:
       - discovery-service
 
+  auth-service:
+    build: ./auth-service
+    container_name: procurement-auth
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/procurement_auth_db
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-service:
+        condition: service_started
+      config-service:
+        condition: service_started
+
   user-service:
     build: ./user-service
     container_name: procurement-user
     ports:
-      - "8081:8081"
+      - "8082:8082"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/procurement_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/procurement_user_db
       SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
     depends_on:
